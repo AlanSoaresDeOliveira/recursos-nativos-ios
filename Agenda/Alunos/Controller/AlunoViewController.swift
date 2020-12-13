@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlunoViewController: UIViewController {
+class AlunoViewController: UIViewController, ImagePickerFotoSelecionada {
     
     // MARK: - IBOutlets
     
@@ -23,11 +23,16 @@ class AlunoViewController: UIViewController {
     @IBOutlet weak var textFieldSite: UITextField!
     @IBOutlet weak var textFieldNota: UITextField!
     
+    // MARK: - Atibutos
+    
+    var imagePicker = ImagePicker()
+    
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.arredondaView()
+        self.setup()
         NotificationCenter.default.addObserver(self, selector: #selector(aumentarScrollView(_:)), name: .UIKeyboardWillShow, object: nil)
     }
     
@@ -36,6 +41,10 @@ class AlunoViewController: UIViewController {
     }
     
     // MARK: - Métodos
+    
+    func setup() {
+        imagePicker.delegate = self
+    }
     
     func arredondaView() {
         self.viewImagemAluno.layer.cornerRadius = self.viewImagemAluno.frame.width / 2
@@ -47,10 +56,33 @@ class AlunoViewController: UIViewController {
         self.scrollViewPrincipal.contentSize = CGSize(width: self.scrollViewPrincipal.frame.width, height: self.scrollViewPrincipal.frame.height + self.scrollViewPrincipal.frame.height/2)
     }
     
+    func mostrarMultimidia(_ opcao: MenuOpacao) {
+        let multimidia = UIImagePickerController()
+        multimidia.delegate = imagePicker
+        
+        if opcao == .camera && UIImagePickerController.isSourceTypeAvailable(.camera) {
+            multimidia.sourceType = .camera
+        } else {
+            multimidia.sourceType = .photoLibrary
+        }
+        
+        self.present(multimidia, animated: true, completion: nil)
+    }
+    
+    // MARK: - Delegate
+    
+    func imagePickerFotoSelecionada(_ foto: UIImage) {
+        imageAluno.image = foto
+    }
+    
     // MARK: - IBActions
     
     @IBAction func buttonFoto(_ sender: UIButton) {
-        // TO DO
+        
+        let menu = ImagePicker().menuDeOpacao { (opcao) in
+            self.mostrarMultimidia(opcao)
+        }
+        present(menu, animated: true, completion: nil)
     }
     
     @IBAction func stepperNota(_ sender: UIStepper) {

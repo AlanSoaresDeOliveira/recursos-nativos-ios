@@ -20,7 +20,6 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
     
     let searchController = UISearchController(searchResultsController: nil)
     var gerenciadorDeResultados: NSFetchedResultsController<Aluno>?
-    
     var alunoViewController: AlunoViewController?
     
     // MARK: - View Lifecycle
@@ -35,7 +34,6 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
     
     func configuraSearch() {
         self.searchController.searchBar.delegate = self
-//        self.searchController.dimsBackgroundDuringPresentation = false
         self.navigationItem.searchController = searchController
     }
     
@@ -108,7 +106,8 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .delete:
-            // implementar
+            guard let indexPath = indexPath else { return }
+            tableView.deleteRows(at: [indexPath], with: .fade)
             break
         default:
             tableView.reloadData()

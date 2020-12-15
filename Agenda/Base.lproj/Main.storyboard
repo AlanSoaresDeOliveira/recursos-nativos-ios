@@ -39,6 +39,7 @@
                                 <connections>
                                     <outlet property="imageAluno" destination="I1a-iL-YQH" id="dM3-yt-b69"/>
                                     <outlet property="labelNomeDoAluno" destination="oKL-i4-VS5" id="GFr-bb-rep"/>
+                                    <segue destination="ZY7-NM-Hup" kind="show" identifier="editar" id="iwa-9a-DBm"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -227,6 +228,7 @@
                             <constraint firstItem="kjd-vi-ppJ" firstAttribute="leading" secondItem="nVT-S7-kWk" secondAttribute="leading" constant="16" id="tnp-nO-LJA"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="t5Z-hz-zXf"/>
                     <connections>
                         <outlet property="buttonFoto" destination="X6G-KS-zIE" id="TSZ-IB-8Ah"/>
                         <outlet property="imageAluno" destination="EeF-Ef-j6E" id="0lP-oI-Din"/>
@@ -260,4 +262,7 @@
             <point key="canvasLocation" x="-519" y="116"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="iwa-9a-DBm"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -105,7 +105,19 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
         }
     }
     
+    @IBAction func buttonCalculaMedia(_ sender: UIBarButtonItem) {
+        guard let listaDeAlunos = gerenciadorDeResultados?.fetchedObjects else { return }
+        CalculaMediaAPI().calculaMediaGeralDeAlunos(alunos: listaDeAlunos) { (diconario) in
+            if let alerta = Notificacao().exibeNotificacaoDeMediasDosAlunos(dicionarioDeMedia: diconario) {
+                self.present(alerta, animated: true, completion: nil)
+            }            
+        } falha: { (error) in
+            print(error.localizedDescription)
+        }
 
+    }
+    
+    
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

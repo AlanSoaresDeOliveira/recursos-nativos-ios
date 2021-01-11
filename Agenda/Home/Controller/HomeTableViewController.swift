@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import SafariServices
 
 class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFetchedResultsControllerDelegate {
     
@@ -114,6 +115,22 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
                     let mapa = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mapa") as! MapaViewController
                     mapa.aluno = alunoSelecionado
                     self.navigationController?.pushViewController(mapa, animated: true)
+                    break
+                    
+                case .abrirPaginaWeb:
+                    
+                    if let urlDoAluno = alunoSelecionado.site {
+                        var urlFormatada = urlDoAluno
+                        
+                        if !urlFormatada.hasPrefix("https://") {
+                            urlFormatada = String(format: "https://%@", urlFormatada)
+                        }
+                        
+                        guard let url = URL(string: urlFormatada) else { return }
+                        let safiraViewController = SFSafariViewController(url: url)
+                        self.present(safiraViewController, animated: true, completion: nil)
+                    }
+                    
                     break
                 }
             }

@@ -38,10 +38,14 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
         self.navigationItem.searchController = searchController
     }
     
-    func recuperarAluno() {
+    func recuperarAluno(filtro: String = "") {
         let pesquisaAluno: NSFetchRequest<Aluno> = Aluno.fetchRequest()
         let odernaPorNome = NSSortDescriptor(key: "nome", ascending: true)
         pesquisaAluno.sortDescriptors = [odernaPorNome]
+        
+        if verificafiltro(filtro) {
+            pesquisaAluno.predicate = filtrarAluno(filtro)
+        }
         
         gerenciadorDeResultados = NSFetchedResultsController(fetchRequest: pesquisaAluno, managedObjectContext: contexto, sectionNameKeyPath: nil, cacheName: nil)
         gerenciadorDeResultados?.delegate = self
@@ -63,6 +67,18 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let alunoSelecionado = gerenciadorDeResultados?.fetchedObjects![indexPath.row] else { return }
         alunoViewController?.aluno = alunoSelecionado
+    }
+    
+    func filtrarAluno(_ filtro: String) -> NSPredicate {
+        return NSPredicate(format: "nome CONTAINS %@", filtro)
+    }
+    
+    func verificafiltro(_ filtro: String) -> Bool {
+        if filtro.isEmpty {
+            return false
+        }
+        
+        return true
     }
     
     @objc func abrirActionSheet(_ longPress: UILongPressGestureRecognizer) {
@@ -176,5 +192,20 @@ class HomeTableViewController: UITableViewController, UISearchBarDelegate, NSFet
             tableView.reloadData()
         }
     }
+    
+    
+    // MARK: - SearchBarDelegate
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let nomeDoAluno = searchBar.text else { return }
+        recuperarAluno(filtro: nomeDoAluno)
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        recuperarAluno()
+        tableView.reloadData()
+    }
+    
 
 }

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import CoreData
 
 class AlunoViewController: UIViewController, ImagePickerFotoSelecionada {
     
@@ -27,10 +26,7 @@ class AlunoViewController: UIViewController, ImagePickerFotoSelecionada {
     // MARK: - Atibutos
     
     var imagePicker = ImagePicker()
-    var contexto: NSManagedObjectContext {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return appDelegate.persistentContainer.viewContext
-    }
+    
     var aluno: Aluno?
     
     // MARK: - View Lifecycle
@@ -82,6 +78,25 @@ class AlunoViewController: UIViewController, ImagePickerFotoSelecionada {
         self.present(multimidia, animated: true, completion: nil)
     }
     
+    func montaDicionarioDeParametros() -> [String: String] {
+        guard let nome = textFieldNome.text else { return [:] }
+        guard let endereco = textFieldEndereco.text else { return [:] }
+        guard let telefone = textFieldTelefone.text else { return [:] }
+        guard let site = textFieldSite.text else { return [:] }
+        guard let nota = textFieldNota.text else { return [:] }
+        
+        let dicionario: [String: String] = [
+            "id" : String(describing: UUID()),
+            "nome": nome,
+            "endereco": endereco,
+            "telefone": telefone,
+            "site": site,
+            "nota": nota
+        ]
+        
+        return dicionario
+    }
+    
     // MARK: - Delegate
     
     func imagePickerFotoSelecionada(_ foto: UIImage) {
@@ -103,25 +118,11 @@ class AlunoViewController: UIViewController, ImagePickerFotoSelecionada {
     }
     
     @IBAction func buttonSalvar(_ sender: UIButton) {
+                
+        let json = montaDicionarioDeParametros()
+        Repositorio().salvaAluno(aluno: json)
         
-        if aluno == nil {
-            aluno = Aluno(context: contexto)
-        }
-        
-        aluno?.nome = textFieldNome.text
-        aluno?.telefone = textFieldTelefone.text
-        aluno?.endereco = textFieldEndereco.text
-        aluno?.site = textFieldSite.text
-        aluno?.nota = (textFieldNota.text! as NSString).doubleValue
-        aluno?.foto = imageAluno.image
-        
-        do {
-            try contexto.save()
-            navigationController?.popViewController(animated: true)
-        } catch {
-            print(error.localizedDescription)
-        }
-        
+        navigationController?.popViewController(animated: true)        
         
     }
     

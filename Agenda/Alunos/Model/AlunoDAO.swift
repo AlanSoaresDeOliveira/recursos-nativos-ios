@@ -38,27 +38,43 @@ class AlunoDAO: NSObject, NSFetchedResultsControllerDelegate {
     }
 
     func salvaAluno(dicionarioAluno: [String: String]) {
-        let aluno = Aluno(context: contexto)
         
+        var aluno: NSManagedObject?
         guard let id = UUID(uuidString: dicionarioAluno["id"]!) else { return }
         
-        aluno.id = id        
-        aluno.nome = dicionarioAluno["nome"] ?? ""
-        aluno.telefone = dicionarioAluno["telefone"] ?? ""
-        aluno.endereco = dicionarioAluno["endereco"] ?? ""
-        aluno.site = dicionarioAluno["site"] ?? ""
+        let alunos = recuperarAlunos().filter() { $0.id == id }
+        
+        if alunos.count > 0 {
+            guard let alunoEncontrado = alunos.first else { return }
+            aluno = alunoEncontrado
+        } else {
+            let entidade = NSEntityDescription.entity(forEntityName: "Aluno", in: contexto)
+            aluno = NSManagedObject(entity: entidade!, insertInto: contexto)
+        }
+        
+        aluno?.setValue(id, forKey: "id")
+        aluno?.setValue(dicionarioAluno["nome"] ?? "", forKey: "nome")
+        aluno?.setValue(dicionarioAluno["telefone"] ?? "", forKey: "telefone")
+        aluno?.setValue(dicionarioAluno["endereco"] ?? "", forKey: "endereco")
+        aluno?.setValue(dicionarioAluno["site"] ?? "", forKey: "site")
+        
         
         guard let nota = dicionarioAluno["nota"] else { return }
         
         if type(of: nota) == String.self {
-            aluno.nota = (dicionarioAluno["nota"]! as NSString).doubleValue
+            aluno?.setValue((dicionarioAluno["nota"]! as NSString).doubleValue , forKey: "nota")
         } else {
             let conversaoDeNota = String(describing: nota)
-            aluno.nota = (conversaoDeNota as NSString).doubleValue
+            aluno?.setValue((conversaoDeNota as NSString).doubleValue, forKey: "nota")
         }
         
-        aluno.nota = (dicionarioAluno["nota"]! as NSString).doubleValue  
+//        aluno.nota = (dicionarioAluno["nota"]! as NSString).doubleValue
         
+        atualizaContexto()
+    }
+    
+    func deletaAluno(aluno: Aluno) {
+        contexto.delete(aluno)
         atualizaContexto()
     }
     

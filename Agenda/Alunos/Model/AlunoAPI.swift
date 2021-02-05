@@ -30,23 +30,29 @@ class AlunoAPI: NSObject {
                 completion()
                 break
             }
-            
         }
-        
     }
     
     // MARK: - POST
     
     func salvaAlunosNoServidor(parametros: [String: String]) {
-//        guard let url = URL(string: "http://localhost:3333/alunos") else { return }
-//        var requisicao = URLRequest(url: url)
-//        requisicao.httpMethod = "POST"
-//        let json = try! JSONSerialization.data(withJSONObject: parametros, options: [])
-//        requisicao.httpBody = json
-//        requisicao.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         AF.request("http://localhost:3333/alunos", method: .post, parameters: parametros, encoding: JSONEncoding.default, headers: nil).responseJSON { respnse in
             debugPrint(respnse)
+        }
+    }
+    
+    // MARK: - DELETE
+    
+    func deletaAluno(id: String) {
+        AF.request("http://localhost:3333/alunos/\(id)", method: .delete).responseJSON { (resposta) in
+            switch resposta.result {
+            case .failure(let error):
+                print(error)
+                break
+            default:
+                break
+            }
         }
     }
 }

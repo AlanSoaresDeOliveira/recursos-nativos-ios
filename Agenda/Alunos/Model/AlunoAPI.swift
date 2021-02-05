@@ -19,7 +19,7 @@ class AlunoAPI: NSObject {
             
             switch response.result {
             case .success(let data):
-                guard let listaAlunos = data as? Array<Dictionary<String, String>> else { return  }
+                guard let listaAlunos = data as? [[String: String]] else { return  }
                 for dicionarioDeAluno in listaAlunos {
                     AlunoDAO().salvaAluno(dicionarioAluno: dicionarioDeAluno)
                 }
@@ -42,6 +42,7 @@ class AlunoAPI: NSObject {
         }
     }
     
+            
     // MARK: - DELETE
     
     func deletaAluno(id: String) {

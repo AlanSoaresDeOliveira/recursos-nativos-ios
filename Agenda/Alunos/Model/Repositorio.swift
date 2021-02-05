@@ -10,7 +10,8 @@ import UIKit
 
 class Repositorio: NSObject {
 
-    func recuperaAlunos(completion: @escaping(_ listaDeAlunos: Array<Aluno>) -> Void) {
+    func recuperaAlunos(completion: @escaping(_ listaDeAlunos: Array<Aluno>) -> Void) {           
+        
         var alunos = AlunoDAO().recuperarAlunos()
         if alunos.count == 0 {
             AlunoAPI().recuperaAlunos {
@@ -20,6 +21,8 @@ class Repositorio: NSObject {
         } else {
             completion(alunos)
         }
+        
+        
     }
     
     func salvaAluno(aluno: [String: String]) {
@@ -35,21 +38,23 @@ class Repositorio: NSObject {
     
     func sincronizaAlunos() {
         let alunos = AlunoDAO().recuperarAlunos()
-        var listaDeParametros: Array<Dictionary<String,String>> = []
         
         for  aluno in alunos {
-            guard let id = aluno.id else { return }
+            
+            guard let alunoid = aluno.id else { return }
+            let id = String(describing: alunoid)
             
             let parametros: Dictionary<String, String> = [
-                "id": String(decribing: id),
+                "id": id,
                 "nome": aluno.nome ?? "",
                 "endereco": aluno.endereco ?? "",
                 "telefone": aluno.telefone ?? "",
                 "site": aluno.site ?? "",
                 "nota": "\(aluno.nota)",
             ]
-            listaDeParametros.append(parametros)
+            AlunoAPI().salvaAlunosNoServidor(parametros: parametros)
         }
-        AlunoAPI().salvaAlunosNoServidor(parametros: listaDeParametros)
+        
+        
     }
 }

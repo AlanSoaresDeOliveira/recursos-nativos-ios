@@ -13,7 +13,7 @@ class AlunoAPI: NSObject {
     
     // MARK: - GET
     
-    func recuperaAlunos() {
+    func recuperaAlunos(completion: @escaping() -> Void) {
         let respose = AF.request("http://localhost:3333/alunos")
         respose.responseJSON { (response) in
             
@@ -23,9 +23,11 @@ class AlunoAPI: NSObject {
                 for dicionarioDeAluno in listaAlunos {
                     AlunoDAO().salvaAluno(dicionarioAluno: dicionarioDeAluno)
                 }
+                completion()
                 break
             case .failure(let error):
                 print(error)
+                completion()
                 break
             }
             
